@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<?php
+	$this->headerFile('<script type="text/javascript" src="'.Unus::getPath().'js/jquery/lib/jquery.min.js"></script>', 'PREPEND');
+	$header =  $this->headerTitle();
+?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title><?php echo $header ?></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+    <link type="text/css" href="<?=ADMIN_MEDIA_URL?>admin/stylesheet.css" rel="stylesheet" />
+    <link type="text/css" href="<?=ADMIN_MEDIA_URL?>admin/blue.css" rel="stylesheet" />
+	<?php echo $this->headerFile(); ?>
+	<script type="text/javascript" type="text/javascript" href="<?=$this->script_source_url?>js/jquery/jquery.validate.min.js"></script>
+</head>
+<body>
+    <div id="header">
+        <div class="content">
+            <div class="right">
+                <ul>
+                    <li class="brown">
+                        <?php echo $this->user->username; ?>
+                    </li>
+                    <li class="white brown">
+                        <span><a href="#">Dashboard</a></span>
+                    </li>
+                    <li class="brown white">
+                        <span><a href="<?php echo Unus::getPath(); ?>user/logout">Logout</a></span>
+                    </li>
+                     <li class="white">
+                        <span><a href="<?php echo Unus::getPath(); ?>user/settings/?update=password">Change Password</a></span>
+                    </li>
+                </ul>
+            </div>
+            <ul>
+                <li class="brown">
+                    unus <span class="grey">administration</span>
+                </li>
+                <li class="white">
+                    <div id="navigation">
+						<?php echo $this->getChildHtml('navigation'); ?>
+                    </div>
+                </li>
+            </ul>
+			<div class="clear"></div>
+            <div class="info">
+                <div>
+                    <?php
+					$headerLinks = explode(' » ', $header);
+					$links = Unus::getPath().Unus::adminPath();
+					$links = str_replace('//', '/', $links);
+					foreach ($headerLinks  as $k => $v) {
+						if ($v == 'Administration') {
+							echo '<a href="'.Unus::adminPath().'">Administration</a> ';
+						} else {
+							$links .= $v.'/';
+							echo '&raquo;  <span><a href="'.strtolower($links).'">'.$v.'</a></span>';
+						}
+					}
+					?>
+                </div>
+            </div>
+			<div class="clear"></div>
+        </div>
+    </div>
+	<?php
+		// SYSTEM MESSAGES ERRORS | MESSAGES | ALERTS
+		if (null != $this->session->getErrorMessage()) {
+			echo '<div class="__UN_error">'.$this->session->getErrorMessage(true).'</div>';
+		}
+		if (null != $this->session->getMessage()) {
+			echo '<div class="__UN_MSG">'.$this->session->getMessage(true).'</div>';
+		}
+		if (null != $this->session->getAlertMessage()) {
+			echo '<div class="__UN_ALERT">'.$this->session->getAlertMessage(true).'</div>';
+		}
+	?>
+    <div id="main">

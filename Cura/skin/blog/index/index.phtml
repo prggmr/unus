@@ -1,0 +1,266 @@
+<?php
+    $this->headerTitle(array('Blog', 'Dashboard'));
+    $this->headerFile(array(
+                            '<script type="text/javascript" src="'.Unus::getThemePath().'admin/js/jquery.tablesorter.min.js"></script>',
+                            '<script type="text/javascript" src="'.Unus::getThemePath().'admin/js/jquery-ui-1.7.2.custom.min.js"></script>',
+                            '<script type="text/javascript" src="'.Unus::getThemePath().'admin/js/jquery.tablesearch.1.0.1.min.js"></script>'
+                           )
+                      );
+    echo $this->getAdminHeader();
+?>
+<script type="text/javascript">
+        $(function() {
+            // table searching
+            $("table#sort-table tbody tr").quicksearch({
+                attached: '#search-container',
+                position: 'prepend',
+                formId: 'table-search',
+                labelText: '<img src="<?php echo Unus::getThemePath(); ?>admin/images/icon_searchbox_selector.gif" alt="Search"  class="searchIcon" />',
+                loaderImg:  '<?php echo Unus::getThemePath(); ?>admin/images/ajax-loader-small.gif',
+                stripeRowClass: ['odd', 'even']
+            });
+
+
+            // table list sorting
+            $("#sort-table").tablesorter({
+                widgets: ['zebra'],
+                cssAsc: 'sorting sorting-asc',
+                cssDesc: 'sorting sorting-desc',
+                cssHeader: 'sortable'
+                });
+
+            // tabs
+            $("#tabs").tabs({
+                fx: {
+                    opacity: 'toggle'
+                },
+                collapsible: true
+            }).find(".ui-tabs-nav").sortable({
+                axis:'y'
+            })
+
+            // table drag sorting
+           /** $("#sortItem").sortable({
+                axis: 'y',
+                stop: function(event, ui) {
+                    var a = 0;
+                    // update zebra
+                    $("#sortItem tr").each(function(i){
+                        if (a % 2 == 0) {
+                            $(this).attr('class', 'odd');
+                        } else {
+                            $(this).attr('class', 'even');
+                        }
+                        a++;
+                    })
+                }
+            });
+            */
+            $("#sortItem tr td.checkbox").click(function(i) {
+                content = $(this).html();
+                if (content == ' - ') {
+                    $(this).html('&radic;');
+                } else {
+                    $(this).html(' - ');
+                }
+                return false;
+            });
+
+            $("#checkAll").click(function(i) {
+                if ($(this).html() == 'Check All') {
+                    $("#sortItem tr td.checkbox").each(function(i){
+                        $(this).html('&radic;');
+                    });
+                    $(this).html('Uncheck All');
+                } else {
+                    $("#sortItem tr td.checkbox").each(function(i){
+                        $(this).html(' - ');
+                    });
+                    $(this).html('Check All');
+                }
+                return false;
+            });
+
+            $("#deleteChecked").click(function(i){
+                if(window.confirm('Are you sure you want to send these entries to the recycling bin?')) {
+                    var string = '';
+                    var a = 0;
+                    $("#sortItem tr td.checkbox").each(function(i){
+                        if( $(this).html() != ' - ') {
+                            string += '&deleteItem[]='+ $(this).attr('id');
+                            a++;
+                            $(this).parent().fadeOut('fast');
+                        }
+                    });
+
+                    if (a == 0) {
+                        success_msg('You did not select any items to delete');
+                    } else {
+                        $.ajax({
+                            type: "POST",
+                            url: "test.php",
+                            data: string,
+                            success: function(msg) {
+                                success_msg('Selected entries have been moved to trash');
+                            }
+                        });
+                    }
+                }
+
+                return false;
+            });
+
+            /**$('#add').click(function() {
+             return !$('#select1 option:selected').remove().appendTo('#select2');
+            });
+            $('#remove').click(function() {
+             return !$('#select2 option:selected').remove().appendTo('#select1');
+            });*/
+
+            $("#ajaxResponse").click(function() {
+                $(this).fadeOut('slow');
+            });
+
+        });
+
+
+        function success_msg(msg) {
+            $("#ajaxResponse").attr('class', '__UN_MSG').html(msg);
+            $("#ajaxResponse").fadeIn('slow');  // fadein if hidden
+        }
+</script>
+<div class="right">
+    <a href="<?php echo Unus::getPath(); ?>blog/add-cat" class="add-box">Add Catgeory</a>
+</div>
+<h1>Blog Dashboard</h1>
+<div class="clear"></div>
+        <div class="columFull">
+
+            <table summary="test" cellspacing="0">
+                <thead>
+                    <tr class="sorting">
+                        <th class="padding-reset">
+                            <!--<img src="http://yobt.tvimages/icon_searchbox_selector.gif" alt="Search"  class="searchIcon" />-->
+                            <div id="search-container"></div>
+                            <div class="clear"></div>
+                            <!--<form class="table-search">
+                                <img src="images/icon_searchbox_selector.gif" alt="Search"  class="searchIcon" />
+                                <input type="text" />
+                                <input type="submit" value="Search" />
+                                <input type="button" value="Reset" /> 36-48 of (<span>1,590 Results</span>)
+                            </form>-->
+                        </th>
+                        <th class="highlighted">
+                            Filter
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="padding-reset" id="sortItem">
+                    <tr>
+                        <td class="padding-reset">
+                            <table cellspacing="0" class="data margin-reset padding-reset" width="85%" id="sort-table">
+                                <thead>
+                                    <tr>
+                                        <td class="data" colspan="5">
+                                            <?php echo $this->pagination->build(); ?>
+                                        </td>
+                                    </tr>
+                                    <tr class="sorting">
+                                        <th nowrap="nowrap" class="sortable">ID</th>
+                                        <th class="sortable">Title</th>
+                                        <th class="sortable">Date Created</th>
+                                        <th class="sortable" width="1%">Edit</th>
+                                        <th nowrap="nowrap" class="sortable" width="1%">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="padding-reset" id="sortItem">
+                                    <?php
+                                    if (count($this->indexCategories) == 0) {
+                                        echo '<tr><td colspan="5">There are no items to display</td></tr>';
+                                    }
+                                    $a = 0;
+                                    foreach ($this->indexCategories as $k => $v) {
+                                        $class = ($a % 2 == 0) ? 'even' : 'odd';
+                                        echo '<tr class="'.$class.'">
+                                        <td>'.$v['catId'].'</td>
+                                        <td><span><strong><a href="'.Unus::getPath().'blog/manage-cat?catId='.$v['catId'].'">'.$v['title'].'</a></strong></span></td>
+                                        <td>Unknown</td>
+                                        <td><a href="'.Unus::getPath().'blog/edit-cat?catId='.$v['catId'].'"><img src="'.Unus::getPath().'images/page_edit.png" /></a>
+                                        <td id="1" class="checkbox"> - </td>
+                                    </tr>';
+                                    }
+                                    ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td class="data" colspan="4">
+                                            <?php echo $this->pagination->build(); ?>
+                                        </td>
+                                        <td class="data" nowrap="nowrap">
+                                            <a href="#" id="checkAll">Check All</a>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </td>
+                        <td class="padding-reset filter-bg" id="tabs">
+                            <ul class="filter">
+                                <!--<li>
+                                    <a href="#tabs-1" class="filter-title">By Date (Creation)</a>
+                                    <div id="tabs-1" class="filter-content">
+                                        <ul>
+                                            <li>Last 1 Day</li>
+                                            <li>Last 10 Days</li>
+                                            <li>Last 30 Days</li>
+                                            <li>Last 2 Months</li>
+                                            <li>Last 6 Months</li>
+                                            <li>Last Year</li>
+                                            <li>1 Year+</li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li> <a href="#tabs-2" class="filter-title">By Date (Modified)</a>
+                                    <div id="tabs-2" class="filter-content">
+                                            <ul>
+                                                <li>Last 1 Day</li>
+                                                <li>Last 10 Days</li>
+                                                <li>Last 30 Days</li>
+                                                <li>Last 2 Months</li>
+                                                <li>Last 6 Months</li>
+                                                <li>Last Year</li>
+                                                <li>1 Year+</li>
+                                            </ul>
+                                        </div>
+                                </li>-->
+                                <li> <a href="#tabs-3" class="filter-title">By Parent</a><div id="tabs-3" class="filter-content">
+                                            <ul>
+                                                <?php
+                                                    foreach ($this->blogCategories as $k => $v) {
+                                                        echo '<li onclick="window.location.href=\''.Unus::getPath().'blog/?sort=parent&parentId='.$v['catId'].'\'">'.$v['title'].'</li>';
+                                                    }
+                                                ?>
+                                            </ul>
+                                        </div>
+                                </li>
+                                <li> <a href="#tabs-4" class="filter-title">By Title</a>
+                                    <div id="tabs-4" class="filter-content">
+                                            <ul>
+                                                <li>A-E</li>
+                                                <li>F-K</li>
+                                                <li>L-P</li>
+                                                <li>Q-U</li>
+                                                <li>V-Z</li>
+                                            </ul>
+                                        </div>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="9">
+                            <!--<a href="#" id="saveOrder" class="add-box">Save Order</a>--> <a href="#" class="trash" id="deleteChecked">Delete Selected</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>

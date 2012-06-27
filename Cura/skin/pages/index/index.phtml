@@ -1,0 +1,18 @@
+<?php echo $this->getAdminHeader()?>
+<br /><br />
+<h1><img src="<?php echo Unus::getPath()?>images/rainbow.png" class="midAlign" alt="Rainbow" /> Current Pages</h1>
+<div class="bottomBorder"></div>
+[ <a href="<?php echo Unus::getPath()?>pages/add">Add New Page</a> ]
+<br />
+<?php
+    if (count($this->pagesAll) != 0)
+    {
+        echo $this->buildHelper->buildDisplay($this->pagesAll);
+        echo '<br />';
+    }
+    else
+    {
+        echo '<br /><span class="size12 blue">There are currently no pages!</span> <br /><br /><br />';
+    }
+?>
+<?php echo $this->getAdminFooter()?>

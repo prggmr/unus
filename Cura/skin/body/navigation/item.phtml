@@ -1,0 +1,16 @@
+<?php
+    $rand = rand(1, 100000);
+    echo '<li id="'.$rand.'">';
+?>
+<a href="<?php echo $this->link; ?>"><?php echo $this->title; ?></a>
+    <?php
+    if ($this->children != null) {
+        echo '
+    <ul id="show-'.$rand.'">';
+        echo $this->children;
+        // reset children for next link
+        $this->children = null;
+        echo '
+    </ul>';
+    }
+echo '</li>';

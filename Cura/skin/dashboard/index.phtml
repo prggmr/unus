@@ -1,0 +1,61 @@
+<?php
+    $this->headerTitle('Dashboard');
+    $this->headerFile(array('<script type="text/javascript" src="'.$this->media_url.'js/jquery/lib/jquery.min.js"></script>',
+                    '<script type="text/javascript" src="'.$this->media_url.'js/unus/jquery.stickynote.js"></script>'));
+    echo $this->getAdminHeader();
+?>
+<h1>Administration Dashboard</h1>
+<div class="column500">
+    <div class="note" id="noteDiv">
+        <form id="stickyNote" method="post">
+            <textarea style="width: 100%; color: #0A0A0A; padding: 2px; font-size: 11px; background: none; border: none; height: 175px;" id="note" name="note"><?php print($this->settings['admin_sticky']); ?></textarea>
+            <input type="submit" value="Save Note" class="note-submit" id="update-note" />
+        </form>
+    </div>
+</div>
+<div class="column220">
+<table summary="test" cellspacing="0">
+    <thead>
+        <tr>
+            <th>
+                Navigation
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+                <?php
+                echo Unus_Helper_Admin_Navigation::buildNavigation('dashboard/navigation/index');
+                ?>
+    </tbody>
+</table>
+</div>
+<div class="column220">
+<table summary="test" cellspacing="0">
+    <thead>
+        <tr>
+            <th>
+                User Action Log
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <span>My Recent Actions</span>
+            </td>
+        </tr>
+        <?php
+        $userModel = Unus::getModel('user');
+        $actions = $this->db->fetchAll('SELECT userId, timestamp, action FROM '.ADMIN_LOG.' WHERE userId = "'.$this->user->id.'" ORDER BY logId DESC LIMIT 0,10');
+        foreach ($actions as $k => $v) {
+            echo '<tr>
+            <td class="list">';
+           echo $v['action'].'<br />';
+           echo ' <span class="date"> '.date('m/d/y h:ia', $v['timestamp']).'</span></td></tr>';
+        }
+        ?>
+    </tbody>
+</table>
+</div>
+<?php echo $this->getAdminFooter()?>

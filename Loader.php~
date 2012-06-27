@@ -1,0 +1,234 @@
+<?php
+/**
+ * Unus
+ *
+ * LICENSE
+ *
+ * This source file is subject to the New BSD License that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://nwhiting.com/license
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@nwhiting.com so we can send you a copy immediately.
+ *
+ * DO NOT MODIFY this files contents if you wish to upgrade Unus in the future,
+ * If there is a bug with this file address them at http://www.nwhiting.com/
+ * so we can include this fix for future releases.
+ *
+ * For improvements please address them at http://www.nwhiting.com/
+ * they will be greatly appreciated, while it is not required it would be good
+ * to contribute. HAVE FUN and HAPPY CODING
+ *
+ */
+
+
+
+/**
+ * @category   Unus
+ * @package    Unus_Loader
+ * @version    $Rev: 1$
+ * @author     Nickolas Whiting <admin@nwhiting.com>
+ * @copyright  Copyright 2009 Nickolas Whiting
+ */
+
+class Unus_Loader
+{
+    /*
+     * Directory where cached files are stored
+     */
+
+    public static $_cacheDir = 'var/cache/autoload/';
+
+    /*
+     * Files that are located in the cache dir
+     */
+
+    public static $_cacheDirFiles = array();
+
+
+    /*
+     * Use File Caching
+     */
+    public static $useCache = true;
+
+    /*
+     * Tokenize and compress files
+     */
+    public static $tokenize = true;
+
+    /*
+     * Set system file caching
+     *
+     * @param  boolean  flag True|False use system file caching for autoloading
+     *
+     * @return this
+     */
+
+    public static function setCaching($flag = true)
+    {
+        self::$useCache = $flag;
+    }
+
+    /*
+     * Returns system file caching flag
+     *
+     * @return boolean
+     */
+
+    public static function getCaching()
+    {
+        return  self::$useCache;
+    }
+
+    /*
+     * Sets caching directory
+     *
+     * @param  boolean  flag True|False use system file caching for autoloading
+     *
+     * @return this
+     */
+
+    public static function setCacheDir($str)
+    {
+         self::$_cacheDir = $str;
+    }
+
+    /*
+     * Returns cache dir
+     *
+     * @return boolean
+     */
+
+    public static function getCacheDir()
+    {
+        return  self::$_cacheDir;
+    }
+
+    /*
+     * Set file tokenize to strip all but php code
+     *
+     * This is experimental and may not properly function
+     * !USE AT OWN RISK!
+     *
+     * @param  boolean  flag True|False use tokenizing
+     *
+     * @return boolean
+     */
+
+    public static function setTokenizeStrip($flag = true)
+    {
+         self::$tokenize = $flag;
+    }
+
+    /*
+     * Returns file tokenize
+     *
+     * This is experimental and may not properly function
+     * !USE AT OWN RISK!
+     *
+     * @return boolean
+     */
+
+    public static function getTokenizeStrip()
+    {
+        return self::$tokenize;
+    }
+
+    /*
+     * Takes a PHP file stripes all comments and whitespace
+     *
+     * This is experimental and may not properly function
+     * !USE AT OWN RISK!
+     *
+     * @param  str  file  Name of the file tokenize
+     *
+     * return str
+     */
+
+    public function tokenStrip($file)
+    {
+        $return = null;
+        $tokens = token_get_all($file);
+
+        foreach ($tokens as $token) {
+            if ($token == null) { }
+            elseif (is_string($token)) {
+                $return .= $token .' ';
+            } else {
+                list($id, $text) = $token;
+
+                switch ($id) {
+                    case T_COMMENT:
+                    case T_WHITESPACE:
+                    case T_DOC_COMMENT:
+                        break;
+                    default:
+                         $return .= $text .' ';
+                        break;
+                }
+            }
+        }
+
+        return $return;
+    }
+
+    /*
+     * Scans current file cache dir and puts information in array
+     */
+
+    public static function preload($dir = null)
+    {
+        // scan dir
+        $dir = scandir(self::getCacheDir());
+        $files = array();
+
+        // loop through each and remove anything that is not a file
+        foreach ($dir as $k => $v) {
+            if (strpos($v,'.') === false || strpos($v,'.') > 0) {
+                $files[] = $v;
+            }
+        }
+
+        self::$_cacheDirFiles = $files;
+    }
+
+    /*
+     * Autoloader
+     */
+
+    public static function autoload($className)
+    {
+        // Generate Path to file based on class name
+        $file = str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
+
+        // check for file in file cache
+        if (self::getCaching()) {
+            $cacheFilename = $className.'.php';
+            if (!in_array($cacheFilename, self::$_cacheDirFiles)) {
+                $phpDir = explode(PATH_SEPARATOR, get_include_path());
+                $contents = null;
+                foreach ($phpDir as $k => $v) {
+                    if (file_exists($v.DIRECTORY_SEPARATOR.$file)) {
+                        include($file);
+                        $contents = file_get_contents($v.DIRECTORY_SEPARATOR.$file);
+                        if (self::getTokenizeStrip()) {
+                            $contents = self::tokenStrip($contents);
+                        }
+                        file_put_contents(self::getCacheDir().DIRECTORY_SEPARATOR.$cacheFilename, $contents);
+                    }
+                }
+            } else {
+                include(self::getCacheDir().$cacheFilename);
+            }
+        } else {
+            include($file);
+        }
+    }
+
+    public static function registerAutoload()
+    {
+        spl_autoload_register(array('Unus_Loader', 'autoload'));
+    }
+}
+

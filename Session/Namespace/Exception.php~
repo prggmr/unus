@@ -1,0 +1,28 @@
+<?php
+/**
+ * Unus
+ *
+ * LICENSE
+ *
+ * This source file is subject to the Unus Distribution License that is bundled
+ * with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://nwhiting.com/license
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@nwhiting.com so we can send you a copy immediately.
+ *
+ */
+
+
+
+/**
+ * @category   Unus
+ * @package    Unus_Exception
+ * @version    $Rev: 1$
+ * @author     Nickolas Whiting <nwhiting@xstudiosinc.com>
+ * @copyright  Copyright 2009 Nickolas Whiting
+ */
+
+class Unus_Session_Namespace_Config_Exception extends Unus_Session_Namespace_Exception
+{}

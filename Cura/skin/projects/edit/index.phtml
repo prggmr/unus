@@ -1,0 +1,9 @@
+<?php echo $this->getAdminHeader()?>
+<br /><br />
+<h1><img src="<?php echo Unus::getPath()?>images/rainbow.png" class="midAlign" alt="Rainbow" /> Edit Page <span class="blue"><?php echo $this->pageInfo['title']?></h1>
+<div class="bottomBorder"></div>
+<?php echo $this->formValidator?>
+<form action="<?php echo Unus::getPath()?>pages/edit/<?php echo $this->pageInfo['pageId']?>" id="cat" method="post" class="form">
+    <?php echo $this->form?>
+</form>
+<?php echo $this->getAdminFooter()?>

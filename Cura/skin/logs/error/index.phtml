@@ -1,0 +1,200 @@
+<?php
+    $this->headerTitle('Logs');
+    $this->headerTitle('Error');
+    $this->headerFile(array(
+
+                            '<script type="text/javascript" src="'.Unus::getThemePath().'admin/js/jquery.tablesorter.min.js"></script>',
+                            '<script type="text/javascript" src="'.Unus::getThemePath().'admin/js/jquery-ui-1.7.2.custom.min.js"></script>',
+                            '<script type="text/javascript" src="'.Unus::getThemePath().'admin/js/jquery.tablesearch.1.0.1.min.js"></script>'
+                           )
+                      );
+    $this->session->setAlertMessage('A Large error log may take up a few minutes to fully process when changing pages please be patient..');
+    echo $this->getAdminHeader();
+?>
+<h1>System Logs &raquo; Error Logs</h1>
+<script type="text/javascript">
+$(function() {
+    // table searching
+    $("table#sort-table tbody tr").quicksearch({
+        attached: '#search-container',
+        position: 'prepend',
+        formId: 'table-search',
+        labelText: '<img src="<?php echo Unus::getThemePath(); ?>admin/images/icon_searchbox_selector.gif" alt="Search"  class="searchIcon" />',
+        loaderImg:  '<?php echo Unus::getThemePath(); ?>admin/images/ajax-loader-small.gif',
+        stripeRowClass: ['odd', 'even']
+    });
+
+
+    // table list sorting
+    $("#sort-table").tablesorter({
+        widgets: ['zebra'],
+        cssAsc: 'sorting sorting-asc',
+        cssDesc: 'sorting sorting-desc',
+        cssHeader: 'sortable'
+        });
+
+    // tabs
+    $("#tabs").tabs({
+        fx: {
+            opacity: 'toggle'
+        },
+        collapsible: true
+    }).find(".ui-tabs-nav").sortable({
+        axis:'y'
+    })
+
+    // table drag sorting
+   /** $("#sortItem").sortable({
+        axis: 'y',
+        stop: function(event, ui) {
+            var a = 0;
+            // update zebra
+            $("#sortItem tr").each(function(i){
+                if (a % 2 == 0) {
+                    $(this).attr('class', 'odd');
+                } else {
+                    $(this).attr('class', 'even');
+                }
+                a++;
+            })
+        }
+    });
+    */
+    $("#sortItem tr td.checkbox").click(function(i) {
+        content = $(this).html();
+        if (content == ' - ') {
+            $(this).html('&radic;');
+        } else {
+            $(this).html(' - ');
+        }
+        return false;
+    });
+
+    $("#checkAll").click(function(i) {
+        if ($(this).html() == 'Check All') {
+            $("#sortItem tr td.checkbox").each(function(i){
+                $(this).html('&radic;');
+            });
+            $(this).html('Uncheck All');
+        } else {
+            $("#sortItem tr td.checkbox").each(function(i){
+                $(this).html(' - ');
+            });
+            $(this).html('Check All');
+        }
+        return false;
+    });
+
+    $("#deleteChecked").click(function(i){
+        if(window.confirm('Are you sure you want to empty the error log?\nThis process cannot be reversed')) {
+            window.location='<?php echo Unus::getPath();?>logs/error/delete';
+        }
+
+        return false;
+    });
+
+    /**$('#add').click(function() {
+     return !$('#select1 option:selected').remove().appendTo('#select2');
+    });
+    $('#remove').click(function() {
+     return !$('#select2 option:selected').remove().appendTo('#select1');
+    });*/
+
+    $("#ajaxResponse").click(function() {
+        $(this).fadeOut('slow');
+    });
+
+});
+
+
+function success_msg(msg) {
+    $("#ajaxResponse").attr('class', '__UN_MSG').html(msg);
+    $("#ajaxResponse").fadeIn('slow');  // fadein if hidden
+}
+<?php
+$pagination = new Unus_Pagination(count($this->errorLog), Unus::getPath().'logs/error');
+$pagination->setAutoIdentifier(true);
+$pagination->setIdentifier('page');
+$pagination->setPerPage(15);
+$start = $pagination->getStart();
+?>
+</script>
+<div class="columFull">
+    <table summary="test" cellspacing="0">
+        <thead>
+            <tr class="sorting">
+                <th class="padding-reset">
+                    <div id="search-container"></div>
+                    <div class="clear"></div>
+                </th>
+            </tr>
+        </thead>
+        <tbody class="padding-reset" id="sortItem">
+            <tr>
+                <td class="padding-reset">
+                    <table cellspacing="0" class="data margin-reset padding-reset" width="85%" id="sort-table">
+                        <thead>
+                        <tr>
+                            <th class="sortable"><strong>Error</strong></th>
+                            <th class="sortable"><strong>Date</strong></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        /**$this->errorLog = array_reverse($this->errorLog);*/
+                        $a = 0;
+                        // subtract one as array starts at 0
+                        // there is a bug that wont display first error...
+                        // TODO: FIX NON DISPAY BUG ERROR LOG
+                        if (count($this->errorLog) == 0 || count($this->errorLog) == 1) {
+                             echo '<tr class="even">
+                                    <td colspan="2">The error log is empty</td>
+                                    </tr>';
+                        } else {
+                            if ($start != 0) {
+                                $start = $pagination->getStart() - 1;
+                                while ($a != $start) {
+                                    unset($this->errorLog[$a]);
+                                    $a++;
+                                }
+                            }
+                            $a = 0;
+                            $b = 0;
+                            foreach ($this->errorLog as $k => $v) {
+                                $display = ($a % 2 == 0) ? 'even' : 'odd';
+                                $a++;
+                                $b++;
+                                if ($v['error'] != null) {
+                                    $time = strtotime($v['time']);
+                                    echo '<tr class="'.$display.'">
+                                    <td>'.$v['error'].'</td>
+                                    <td style="vertical-align: top;" nowrap="nowrap"><strong>'.date('M jS, Y h:i A', $time).'</strong></td>
+                                    </tr>';
+                                }
+
+                                if ($b == $pagination->getPerPage()) {
+                                    break;
+                                }
+                            }
+                        }
+                        ?>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2">
+                                    <?php echo $pagination->build(); ?>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="9">
+                    <!--<a href="#" id="saveOrder" class="add-box">Save Order</a>--> <a href="#" class="trash" id="deleteChecked">Empty Log</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<?php echo $this->getAdminFooter()?>

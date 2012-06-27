@@ -1,0 +1,12 @@
+<?php
+    $this->headerTitle(array('Blog', 'Edit Category', $this->catInfo['title']));
+    echo $this->getAdminHeader();
+?>
+<br /><br />
+<h1><img src="<?php echo Unus::getPath()?>images/rainbow.png" class="midAlign" alt="Rainbow" /> Edit Blog Category <span class="blue"><?php echo $this->catInfo['title']?></h1>
+<div class="bottomBorder"></div>
+<?php echo $this->formValidator?>
+<form action="<?php echo Unus::getPath()?>blog/edit/cat/<?php echo $this->catInfo['catId']?>" id="cat" method="post" class="form">
+    <?php echo $this->form?>
+</form>
+<?php echo $this->getAdminFooter()?>

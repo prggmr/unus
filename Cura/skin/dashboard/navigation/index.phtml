@@ -1,0 +1,32 @@
+<?php echo '<tr><td class="list">';
+?>
+<a href="<?php echo $this->link; ?>" style="float: left;"><?php echo $this->title; ?></a>
+<?php
+if ($this->children != null) {
+	$rand = rand(1, 100000);
+	?>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$("#<?php echo $rand; ?>").click(function(){
+			if($("#show-<?php echo $rand; ?>").css('display') == 'none') {
+				$("#show-<?php echo $rand; ?>").show('fast');
+				$("#<?php echo $rand; ?>").html('Hide <?php echo $this->title; ?> Sub-Navigation');
+			} else {
+				$("#show-<?php echo $rand; ?>").hide('fast');
+				$("#<?php echo $rand; ?>").html('Expand <?php echo $this->title; ?> Sub-Navigation');
+			}
+		});
+	});
+
+	</script>
+	<?php
+	echo '
+	<tr><td><span id="'.$rand.'" class="date">Expand '.$this->title.' Sub-Navigation</span>
+	<table id="show-'.$rand.'" style="display: none;" width="95%">';
+	echo $this->children;
+	echo '</table></td></tr>';
+	// reset children for next link
+	$this->children = null;
+} else {
+	echo '</td></tr>';
+}

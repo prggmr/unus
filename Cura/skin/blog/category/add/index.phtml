@@ -1,0 +1,10 @@
+<?php
+    $this->headerTitle(array('Blog', 'Add Category'));
+    echo $this->getAdminHeader();
+?>
+<h1>Add New Category</h1>
+<?php echo $this->formValidator?>
+<form action="<?php echo Unus::getPath()?>blog/edit/cat/<?php echo $this->catInfo['catId']?>" id="cat" method="post" class="form">
+    <?php echo $this->form->render(); ?>
+</form>
+<?php echo $this->getAdminFooter()?>

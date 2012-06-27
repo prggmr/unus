@@ -1,0 +1,18 @@
+<?php echo $this->getAdminHeader()?>
+<br /><br />
+<h1><img src="<?php echo Unus::getPath()?>images/rainbow.png" class="midAlign" alt="Rainbow" /> Current Projects</h1>
+<div class="bottomBorder"></div>
+[ <a href="<?php echo Unus::getPath()?>projects/add">Add New Project</a> ]
+<br />
+<?php
+    if (count($this->projectsAll) != 0)
+    {
+        echo $this->buildHelper->buildDisplay($this->projectsAll);
+        echo '<br />';
+    }
+    else
+    {
+        echo '<br /><span class="size12 blue">There are currently no projects! Have you done any work?</span> <br /><br /><br />';
+    }
+?>
+<?php echo $this->getAdminFooter()?>

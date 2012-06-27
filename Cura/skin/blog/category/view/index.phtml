@@ -1,0 +1,48 @@
+<?php
+    $this->headerTitle(array('Blog', 'View Category', $this->catTitle));
+    echo $this->getAdminHeader();
+?>
+<br /><br />
+<h1><img src="<?php echo Unus::getPath()?>images/rainbow.png" class="midAlign" alt="Rainbow" /> Blog Entries for <?php echo $this->catTitle?> </h1>
+<div class="bottomBorder"></div>
+<?php
+    if (count($this->blogEntries) == 0)
+    {
+        echo 'There have been no entries posted in this category!';
+    }
+    else
+    {
+        echo '<div class="w940 grayBorder size12">';
+        echo '<div class="row">
+                <div class="fRight width10">Options</div>';
+        echo '  <div class="fLeft width90">
+                    <div class="fLeft width50">
+                        Title
+                    </div>
+                    <div class="fLeft width20">Author</div>
+                    <div class="fLeft width20">Date</div>
+                </div>';
+        echo '<div class="cBoth"></div></div>';
+        echo '</div>';
+         echo '<div class="w940 grayBorder size12">';
+        foreach ($this->blogEntries as $k => $v)
+        {
+            echo '<div class="row pt3">
+                    <div class="fRight width10"> <a href="'.Unus::getPath().'blog/edit/post/'.$v['postId'].'"><img src="'.Unus::getPath().'images/page_edit.png" border="0" class="midAlign" alt="Edit Post" /></a> <img src="'.Unus::getPath().'images/page_delete.png" onclick="deleteConfirm(\''.Unus::getPath().'blog/delete/post/'.$v['postId'].'\'); return false;" alt="Delete Post" class="midAlign" /></div>';
+            echo '  <div class="fLeft width90">
+                        <div class="fLeft width50">
+                            '.$v['title'].'
+                        </div>
+                        <div class="fLeft width20">'.$v['author'].'</div>
+                        <div class="fLeft width20">'.date('m/d/y h:ia', $v['timestamp']).'</div>
+                    </div>';
+            echo '<div class="cBoth"></div>
+                  <div class="bottomBorder m0 p0">
+                  </div></div>';
+        }
+        echo '</div>';
+    }
+?>
+<div class="bottomBorder"></div>
+Pages: <?php echo $this->pagination?>
+<?php echo $this->getAdminFooter()?>

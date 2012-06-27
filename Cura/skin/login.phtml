@@ -1,0 +1,40 @@
+<?=$this->getHtml('body/head')?>
+	<div id="login">
+		<div id="content">
+			<div id="logo">
+				<h1>
+					Administration Login
+				</h1>
+				<span>
+					Administration Login
+				</span>
+			</div>
+			<div id="box">
+				<script>
+					$(document).ready(function(){
+						$("#forgot_password").click(function(){
+							window.location = "<?=Unus::getAdminPath()?>lost-password";
+						})
+					})
+				</script>
+				<?php
+				if ($this->session->getErrorMessage()) {
+					echo '<div class="__UN_error">'.$this->session->getErrorMessage(true).'</div>';
+				}
+				?>
+				<?php
+				echo $this->formValidator;
+				if ($this->lock_out) {
+					echo '<div class="__UN_error">';
+					echo __('You have reached the maximum attempts allowed to login <br /><br />
+					You will be unable to attempt another login until <strong>'.date('m/d/Y h:ia', $this->session->getSessionExpire('admin_login_lockout')).'</strong>');
+					echo '</div>';
+				} else {
+					echo $this->form->render();
+				}
+				?>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>
+<?=$this->getHtml('body/foot')?>

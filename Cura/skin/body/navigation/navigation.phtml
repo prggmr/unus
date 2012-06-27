@@ -1,0 +1,29 @@
+<?php
+    //Unus_Helper_Admin_Navigation::addLink('Dashboard', '');
+    /**Unus_Helper_Admin_Navigation::addLink('Blog', 'blog');
+    //Unus_Helper_Admin_navigation::addLink('User', 'user');
+    Unus_Helper_Admin_Navigation::addLink('Portfolio', 'portfolio');
+    Unus_Helper_Admin_Navigation::addLink('Pages', 'pages');
+    Unus_Helper_Admin_navigation::addLink('User Dashboard', 'user', 'user');
+    Unus_Helper_Admin_navigation::addLink('Find Existing User', 'user/search', 'user');
+    Unus_Helper_Admin_navigation::addLink('Register New User', 'user/add', 'find_existing_user');
+    Unus_Helper_Admin_navigation::addLink('Delete User', 'user/add', 'find_existing_user');
+    Unus_Helper_Admin_navigation::addLink('Modify Existing Account', 'user/add', 'find_existing_user');
+    Unus_Helper_Admin_navigation::addLink('Trace Account Permissions', 'user/add', 'find_existing_user');
+    Unus_Helper_Admin_navigation::addLink('Ban a Account', 'user/add', 'find_existing_user');
+    Unus_Helper_Admin_Navigation::addLink('System Settings', 'settings');
+    Unus_Helper_Admin_Navigation::addLink('Blog Dashboard', 'blog', 'blog');
+    Unus_Helper_Admin_Navigation::addLink('Add Post', 'blog/posts', 'blog');
+    Unus_Helper_Admin_Navigation::addLink('Add Project', 'portfolio/new', 'portfolio');
+    Unus_Helper_Admin_Navigation::addLink('Projects Dashboard', 'portfolio', 'portfolio');
+    Unus_Helper_Admin_Navigation::addLink('Page Glossary', 'page/glossary', 'pages');
+    Unus_Helper_Admin_Navigation::addLink('Add Page', 'pages/add', 'pages');*/
+    Unus_Helper_Admin_Navigation::addLink('Logs', 'logs');
+    Unus_Helper_Admin_Navigation::addLink('Action Log', 'logs/action', 'logs');
+    Unus_Helper_Admin_Navigation::addLink('Performance Log', 'logs/performance', 'logs');
+    Unus_Helper_Admin_Navigation::addLink('Error Log', 'logs/error', 'logs');
+    Unus_Helper_Admin_Navigation::addLink('Access Log', 'logs/access', 'logs');
+    #Unus_Helper_Admin_Navigation::addLink('Add Category', 'blog/add-cat', 'blog');
+    Unus::dispatchEvent('admin_build_navigation');
+    echo '<ul>'.Unus_Helper_Admin_Navigation::buildNavigation().'</ul>';
+?>

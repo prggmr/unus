@@ -1,0 +1,15 @@
+<?php
+    $this->headerFile('<script type="text/javascript" src="'.Unus::getPath().'js/unus/jquery.validation.addons.js"></script>');
+    $this->headerTitle('User Registration');
+    echo $this->getAdminHeader();
+    echo '<h2>Administration User Registration</h2>';
+    echo '<p>
+    This page allows you to add a new user through the administration. <br /> By default the user is added with the group role of <span class="highlight">User</span></p>';
+    echo $this->formValidator;
+    echo '<form action="" class="form" method="post" id="register">';
+    echo $this->form->render();
+    echo '</form>';
+?>
+
+<?php
+    echo $this->getAdminFooter();

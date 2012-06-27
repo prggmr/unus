@@ -1,0 +1,9 @@
+<?php echo $this->getAdminHeader()?>
+<br /><br />
+<h1><img src="<?php echo Unus::getPath()?>images/rainbow.png" class="midAlign" alt="Rainbow" /> Add Blog Post to <?php echo $this->catTitle?> <span class="blue"><?php echo $this->catInfo['title']?></h1>
+<div class="bottomBorder"></div>
+<?php echo $this->formValidator?>
+<form action="<?php echo Unus::getPath()?>blog/add/post/<?php echo $this->catId?>" method="post" id="add" class="form">
+    <?php echo $this->form?>
+</form>
+<?php echo $this->getAdminFooter()?>
